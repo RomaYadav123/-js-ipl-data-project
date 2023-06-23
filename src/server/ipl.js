@@ -11,14 +11,21 @@ const bowlerWithBestEconomyInSuperOversJson = require("./../public/output/9-bowl
 
 app.get("/matchesPerYearDataConversionToJson", (req, res) => {
   const JsonData = matchesPerYearJson;
+
   if (JsonData) {
     res.json(JsonData);
+  } else {
+    throw new Error("Something went wrong");
   }
 });
 
 app.get("/matchesWonPerTeamPerYearDataConversionToJson", (req, res) => {
   const JsonData = matchWonPerTeamPerYearJson;
-  res.json(JsonData);
+  if (!JsonData) {
+    res.json(JsonData);
+  } else {
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.get("/extraRunsConcededPertTeamIn2016DataConversionToJson", (req, res) => {
@@ -65,6 +72,11 @@ app.get(
     res.json(JsonData);
   }
 );
+
+app.use((req, res, next) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server has started on http://localhost:${PORT}`);
